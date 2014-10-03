@@ -20,6 +20,14 @@ type AfterSaveInterface interface {
 	AfterSave()
 }
 
+type BeforeUpdateInterface interface {
+	BeforeUpdate()
+}
+
+type AfterUpdateInterface interface {
+	AfterUpdate()
+}
+
 // go's appengine datastore service returns
 // keys and structs separately
 // an entity is a map where the key is the
@@ -57,5 +65,26 @@ func Save(c appengine.Context, m interface{}) error {
 }
 
 func Update(c appengine.Context, m interface{}) error {
+	// check to call beforeupdate method
+	if _, ok := m.(BeforeUpdateInterface); ok {
+		reflect.ValueOf(m).MethodByName("BeforeUpdate").Call([]reflect.Value{})
+	}
+
+	id := reflect.ValueOf(m).Elem().FieldByName("Id")
+
+	entityKey, err := datastore.DecodeKey(id.String())
+	if err != nil {
+		return err
+	}
+
+	_, err = datastore.Put(c, entityKey, m)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := m.(AfterUpdateInterface); ok {
+		reflect.ValueOf(m).MethodByName("AfterUpdate").Call([]reflect.Value{})
+	}
+
 	return nil
 }
