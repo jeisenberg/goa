@@ -40,6 +40,9 @@ func Save(c appengine.Context, m interface{}) error {
 	// store object in datastore
 	entityName := strings.Split(reflect.TypeOf(m).String(), ".")[1] //assumes model is in separate package
 	entityKey := datastore.NewIncompleteKey(c, entityName, nil)
+	id := entityKey.Encode()
+	// set key as Id value on object
+	reflect.ValueOf(m).Elem().FieldByName("Id").SetString(id)
 	_, err := datastore.Put(c, entityKey, m)
 	if err != nil {
 		return err
