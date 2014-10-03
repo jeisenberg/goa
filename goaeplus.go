@@ -33,7 +33,9 @@ type AfterUpdateInterface interface {
 // an entity is a map where the key is the
 // datastore key of the entity, and the
 // value is the entity data
-// this keeps the object together in one place
+// this method uses a string value on any struct
+// called Id that will be returned as an encoded
+// datastore key
 
 // this is a layer of abstraction to wrap the datastore
 // save function
