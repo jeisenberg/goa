@@ -1,4 +1,4 @@
-package goaeplus
+package goa
 
 // these are interfaces used to check
 // if an object implements a specific

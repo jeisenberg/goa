@@ -1,4 +1,4 @@
-package goaeplus
+package goa
 
 import (
 	"appengine"

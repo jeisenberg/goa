@@ -4,7 +4,7 @@ import (
 	"appengine"
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
-	g "github.com/jeisenberg/goaeplus"
+	g "github.com/jeisenberg/goa"
 	"log"
 	"net/http"
 )
