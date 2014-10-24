@@ -50,12 +50,10 @@ func Save(c appengine.Context, m interface{}, opts *Options) error {
 		return err
 	}
 
-	// if opts.UseMemcache != false {
 	err = setMemcache(m, c)
 	if err != nil {
 		return err
 	}
-	// }
 
 	// check to call aftersave callback
 	if _, ok := m.(AfterSaveInterface); ok {
