@@ -33,7 +33,7 @@ func userHandler(c appengine.Context, u User){
 ```
 Here the save method will first store the entity in the datastore, and will then encode the struct (using the Gob encoder) into memcache. The memcache key will be the same is both the Id field in the struct, or the string that comes from calling (*key datastore.Key).Encode()
 
-### Entity's and Keys
+### Entities and Keys
 
 One quirk with the datastore on app engine is that entity elements and keys are returned separately. For example, a typical datastore query in the app engine SDK looks something like this:
 
