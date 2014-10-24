@@ -3,11 +3,13 @@ package goaeplus
 import (
 	"appengine"
 	"appengine/memcache"
-	"errors"
 	"reflect"
 )
 
 // use Gob encoder for memcache
+
+// fetch item from memcache using the
+// item's id to get it
 
 func getMemcache(m interface{}, key string, c appengine.Context) (interface{}, error) {
 	_, err := memcache.Gob.Get(c, key, m)
@@ -17,21 +19,23 @@ func getMemcache(m interface{}, key string, c appengine.Context) (interface{}, e
 	return m, nil
 }
 
+// set the item in memcache
+// the key will be the encoded
+// datastore key as a string
+
 func setMemcache(m interface{}, c appengine.Context) error {
 
 	id := reflect.ValueOf(m).Elem().FieldByName("Id")
+	idToString := id.String()
 
-	if id.(string) {
-		item := &memache.Item{
-			Key:    id,
-			Object: m,
-		}
-		err := memcache.Gob.Set(c, item)
-		if err != nil {
-			return err
-		}
-	} else {
-		return errors.New("No id value present")
+	item := &memcache.Item{
+		Key:    idToString,
+		Object: m,
 	}
+	err := memcache.Gob.Set(c, item)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

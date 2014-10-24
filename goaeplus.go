@@ -15,10 +15,24 @@ import (
 // called Id that will be returned as an encoded
 // datastore key
 
+/// ex:
+// type User struct {
+// 	name  string
+// 	email string
+// 	Id    string
+// }
+
+// options to use memcache layer
+// defaults to true
+
+type Options struct {
+	UseMemcache bool
+}
+
 // this is a layer of abstraction to wrap the datastore
 // save function
 // ex. err := Save(c, User)
-func Save(c appengine.Context, m interface{}) error {
+func Save(c appengine.Context, m interface{}, opts *Options) error {
 
 	// check to call beforesave method
 	if _, ok := m.(BeforeSaveInterface); ok {
@@ -35,6 +49,13 @@ func Save(c appengine.Context, m interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	// if opts.UseMemcache != false {
+	err = setMemcache(m, c)
+	if err != nil {
+		return err
+	}
+	// }
 
 	// check to call aftersave callback
 	if _, ok := m.(AfterSaveInterface); ok {
@@ -65,6 +86,29 @@ func Update(c appengine.Context, m interface{}) error {
 	// check to call afterupdate method
 	if _, ok := m.(AfterUpdateInterface); ok {
 		reflect.ValueOf(m).MethodByName("AfterUpdate").Call([]reflect.Value{})
+	}
+
+	return nil
+}
+
+func Get(c appengine.Context, id string, entity interface{}) error {
+	// get from memcache
+	if _, err := memcache.Gob.Get(c, id, entity); err == nil {
+		c.Infof("testing memcache hit %s", entity)
+		return nil
+	} else {
+		// fetch from datastore
+		key, err := datastore.DecodeKey(id)
+
+		if err != nil {
+			return err
+		}
+
+		err = datastore.Get(c, key, entity)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 
 	return nil
