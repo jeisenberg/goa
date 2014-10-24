@@ -91,6 +91,9 @@ func Update(c appengine.Context, m interface{}) error {
 	return nil
 }
 
+// get an entity from the datastore, passing through
+// the memcache layer first
+
 func Get(c appengine.Context, id string, entity interface{}) error {
 	// get from memcache
 	if _, err := memcache.Gob.Get(c, id, entity); err == nil {
@@ -109,6 +112,26 @@ func Get(c appengine.Context, id string, entity interface{}) error {
 			return err
 		}
 		return nil
+	}
+
+	return nil
+}
+
+// delete an object from cache and datastore
+
+func Delete(c appengine.Context, id string) error {
+	key, err := datastore.DecodKey(id)
+	if err != nil {
+		return err
+	}
+	err = datastore.Delete(c, key)
+	if err != nil {
+		return err
+	}
+
+	err = memcache.Delete(c, id)
+	if err != nil {
+		return err
 	}
 
 	return nil
