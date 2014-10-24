@@ -3,36 +3,14 @@ package goaeplus
 import (
 	"appengine"
 	"appengine/datastore"
+	"appengine/memcache"
 	_ "log"
 	"reflect"
 	"strings"
 )
 
-// these are interfaces used to check
-// if an object implements a specific
-// callback method
-// if it does, the method will be called
-type BeforeSaveInterface interface {
-	BeforeSave()
-}
-
-type AfterSaveInterface interface {
-	AfterSave()
-}
-
-type BeforeUpdateInterface interface {
-	BeforeUpdate()
-}
-
-type AfterUpdateInterface interface {
-	AfterUpdate()
-}
-
 // go's appengine datastore service returns
 // keys and structs separately
-// an entity is a map where the key is the
-// datastore key of the entity, and the
-// value is the entity data
 // this method uses a string value on any struct
 // called Id that will be returned as an encoded
 // datastore key
@@ -84,6 +62,7 @@ func Update(c appengine.Context, m interface{}) error {
 		return err
 	}
 
+	// check to call afterupdate method
 	if _, ok := m.(AfterUpdateInterface); ok {
 		reflect.ValueOf(m).MethodByName("AfterUpdate").Call([]reflect.Value{})
 	}
