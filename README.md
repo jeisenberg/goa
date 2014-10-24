@@ -12,7 +12,7 @@ Go app engine plus is a package made to help developers build faster and more ef
 
 ### Built-in memcache
 
-GOA will automatically write or read an entity to memcache, which will drastically speed up performance on datastore Get and Put calls.
+GOA will automatically write or read an entity to memcache, which can drastically speed up performance on datastore Get calls.
 
 For example:
 
