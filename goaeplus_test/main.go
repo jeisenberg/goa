@@ -34,7 +34,6 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	user := &User{
 		Name: "test",
 	}
-	log.Println(user)
 	err := g.Save(c, user)
 	if err != nil {
 		log.Printf("Errror: %s", err)

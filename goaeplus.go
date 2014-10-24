@@ -32,7 +32,7 @@ type Options struct {
 // this is a layer of abstraction to wrap the datastore
 // save function
 // ex. err := Save(c, User)
-func Save(c appengine.Context, m interface{}, opts *Options) error {
+func Save(c appengine.Context, m interface{}) error {
 
 	// check to call beforesave method
 	if _, ok := m.(BeforeSaveInterface); ok {
@@ -118,7 +118,7 @@ func Get(c appengine.Context, id string, entity interface{}) error {
 // delete an object from cache and datastore
 
 func Delete(c appengine.Context, id string) error {
-	key, err := datastore.DecodKey(id)
+	key, err := datastore.DecodeKey(id)
 	if err != nil {
 		return err
 	}
